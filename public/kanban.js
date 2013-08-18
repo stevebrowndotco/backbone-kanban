@@ -4,10 +4,17 @@ $(function () {
 
 var Story = Backbone.Model.extend({
 
+  //Status
+  // 0 = Backlog
+  // 1 = Current
+  // 2 = Started
+  // 3 = Complete
+
   defaults: {
     'title': 'This is the title',
     'description': 'Description',
-    'points': 0
+    'points': 0,
+    'status' : 0
   },
 
   url: '/'
@@ -83,21 +90,47 @@ var BaseView = Backbone.View.extend({
     this.story.set({
 
       title: 'This is my collection test ' + this.options.x,
-      description: 'this is the description'
+
+      description: 'this is the description',
+
+      status: Math.floor((Math.random()*4)),
+
+      points: Math.floor((Math.random()*10)+1)
 
     })
+
+    this.stories.add(this.story);
 
     this.story.on('change', this.renderStory(this.story), this);
 
   },
 
-  renderStory: function(model) {
+  renderStory: function (model) {
 
     var storyView = new StoryView({model: model});
 
-    this.$('#story-list').append(storyView.render().el);
+    var currentStatus = model.get('status');
 
-    this.stories.add(this.story);
+    var column = this.$('#col-0');
+
+    switch (currentStatus) {
+
+      case 0:
+        column = this.$('#col-0');
+        break;
+      case 1:
+        column = this.$('#col-1');
+        break;
+      case 2:
+        column = this.$('#col-1');
+        break;
+      case 3:
+        column = this.$('#col-2');
+        break;
+
+    }
+
+    column.prepend(storyView.render().el);
 
   },
 
